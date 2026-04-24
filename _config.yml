@@ -1,0 +1,7 @@
+title: PropVyuh
+description: "Your Chakravyuh against bad home loans. Strategize. Simulate. Strike."
+baseurl: "/PropVyuh"
+
+# Skip Jekyll processing — serve index.html as-is
+exclude: []
+include: ["index.html"]
