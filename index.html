@@ -1,0 +1,699 @@
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bharat Home-Buying Strategy Dashboard | 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --primary: #1B2A4A;
+            --primary-lt: #2C3E6B;
+            --accent: #0891B2;
+            --success: #059669;
+            --success-lt: #06D6A0;
+            --warning: #D97706;
+            --danger: #DC2626;
+            --bg: #F1F5F9;
+            --card: #FFFFFF;
+            --text: #1E293B;
+            --muted: #64748B;
+            --border: #E2E8F0;
+            --radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        /* ── HEADER ─────────────────────────────────────── */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-lt) 100%);
+            color: #fff;
+            padding: 28px 24px;
+            text-align: center;
+        }
+        .header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; }
+        .header p { margin-top: 6px; opacity: 0.8; font-size: 0.9rem; }
+
+        /* ── DASHBOARD GRID ─────────────────────────────── */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 370px 1fr;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        /* ── CARD ───────────────────────────────────────── */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+            margin-bottom: 16px;
+        }
+        .card:last-child { margin-bottom: 0; }
+        .card-title {
+            font-size: 0.73rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        /* ── FORM ───────────────────────────────────────── */
+        .fg { margin-bottom: 14px; }
+        .fg:last-child { margin-bottom: 0; }
+        .fg label {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 0.82rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        .val { font-weight: 700; color: var(--accent); font-size: 0.85rem; }
+        .hint { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-family: inherit;
+            background: #fff;
+            color: var(--text);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(8,145,178,0.12);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border);
+            outline: none;
+            cursor: pointer;
+            margin: 4px 0;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            border: none;
+        }
+
+        /* ── TOGGLE ─────────────────────────────────────── */
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .toggle-label { font-size: 0.85rem; font-weight: 500; }
+        .toggle { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+        .toggle input { display: none; }
+        .toggle-track { position: absolute; inset: 0; background: #CBD5E1; border-radius: 24px; transition: background 0.3s; }
+        .toggle-thumb {
+            position: absolute; width: 18px; height: 18px; left: 3px; top: 3px;
+            background: #fff; border-radius: 50%; transition: transform 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .toggle input:checked + .toggle-track { background: var(--success); }
+        .toggle input:checked + .toggle-track .toggle-thumb { transform: translateX(20px); }
+        .hidden { display: none !important; }
+
+        .subsidy-badge {
+            background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
+            border: 1px solid #A7F3D0;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 10px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--success);
+            font-size: 0.95rem;
+        }
+
+        /* ── KPI ROW ────────────────────────────────────── */
+        .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+        .kpi-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 16px 12px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border-top: 3px solid var(--border);
+        }
+        .kpi-card.blue   { border-top-color: var(--accent); }
+        .kpi-card.indigo { border-top-color: var(--primary); }
+        .kpi-card.green  { border-top-color: var(--success); }
+        .kpi-card.emerald{ border-top-color: var(--success-lt); }
+        .kpi-lbl {
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.8px;
+            color: var(--muted); margin-bottom: 6px; font-weight: 600;
+        }
+        .kpi-val { font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+        .kpi-card.green .kpi-val, .kpi-card.emerald .kpi-val { color: var(--success); }
+
+        /* ── CHARTS ─────────────────────────────────────── */
+        .charts-row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 20px; margin-bottom: 20px; }
+        .chart-card h3 {
+            font-size: 0.73rem; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--muted); font-weight: 600; margin-bottom: 12px;
+        }
+
+        /* ── BREAKDOWN TABLE ────────────────────────────── */
+        .bt { width: 100%; border-collapse: collapse; }
+        .bt td { padding: 7px 0; font-size: 0.85rem; }
+        .bt td:last-child { text-align: right; font-weight: 500; font-variant-numeric: tabular-nums; }
+        .bt .gap td { padding-top: 16px; }
+        .bt .div td { border-top: 1.5px solid var(--border); padding-top: 10px; font-weight: 700; font-size: 0.88rem; }
+        .bt .sav td { color: var(--success); font-weight: 700; }
+        .bt .neg { color: var(--success); }
+        .bt .red { color: var(--danger); }
+
+        /* ── FOOTER ─────────────────────────────────────── */
+        .footer { text-align: center; padding: 20px; color: var(--muted); font-size: 0.78rem; }
+
+        /* ── RESPONSIVE ─────────────────────────────────── */
+        @media (max-width: 1024px) {
+            .dashboard { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.25rem; }
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+            .charts-row { grid-template-columns: 1fr; }
+            .dashboard { padding: 12px; gap: 12px; }
+        }
+        @media (max-width: 480px) {
+            .kpi-val { font-size: 1.05rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <h1>Bharat Home-Buying Strategy Dashboard</h1>
+    <p>Interactive Property Purchase Simulator &bull; April 2026 Market Benchmarks (Repo 5.25%)</p>
+</header>
+
+<main class="dashboard">
+    <!-- ═══ INPUT PANEL ═══ -->
+    <aside>
+        <!-- Property Details -->
+        <div class="card">
+            <div class="card-title">Property Details</div>
+            <div class="fg">
+                <label>State / UT</label>
+                <select id="selState"></select>
+            </div>
+            <div class="fg">
+                <label>Property Value <span class="val" id="pvDisp">&#8377;75.00 L</span></label>
+                <input type="range" id="pvSlider" min="10" max="500" step="5" value="75">
+                <input type="number" id="pvInput" min="10" max="500" step="1" value="75" style="margin-top:6px">
+                <div class="hint">Range: &#8377;10 Lakh &mdash; &#8377;5 Crore</div>
+            </div>
+            <div class="fg">
+                <label>Construction Status</label>
+                <select id="selConst">
+                    <option value="rtm">Ready to Move (0% GST)</option>
+                    <option value="aff">Under Construction &mdash; Affordable (1% GST)</option>
+                    <option value="uc">Under Construction (5% GST, 33% Land Abatement)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Loan Configuration -->
+        <div class="card">
+            <div class="card-title">Loan Configuration</div>
+            <div class="fg">
+                <label>Bank / Lender</label>
+                <select id="selBank"></select>
+            </div>
+            <div class="fg">
+                <label>Down Payment <span class="val" id="dpDisp">20%</span></label>
+                <input type="range" id="dpSlider" min="20" max="50" step="1" value="20">
+                <div class="hint" id="dpAmt">&#8377;15,00,000 &bull; LTV capped at 80%</div>
+            </div>
+            <div class="fg">
+                <label>Interest Rate (% p.a.)</label>
+                <input type="number" id="rateIn" min="5" max="15" step="0.05" value="7.25">
+            </div>
+            <div class="fg">
+                <label>Loan Tenure <span class="val" id="tenDisp">20 Years</span></label>
+                <input type="range" id="tenSlider" min="5" max="30" step="1" value="20">
+            </div>
+        </div>
+
+        <!-- PMAY & Benefits -->
+        <div class="card">
+            <div class="card-title">PMAY &amp; Benefits</div>
+            <div class="toggle-row">
+                <span class="toggle-label">PMAY-CLSS Eligible</span>
+                <label class="toggle">
+                    <input type="checkbox" id="pmayTgl">
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                </label>
+            </div>
+            <div id="pmayOpts" class="hidden">
+                <div class="fg">
+                    <label>Income Category</label>
+                    <select id="pmayCat">
+                        <option value="0">EWS (Income &le; &#8377;3L)</option>
+                        <option value="1">LIG (&#8377;3L &ndash; &#8377;6L)</option>
+                        <option value="2">MIG-I (&#8377;6L &ndash; &#8377;12L)</option>
+                        <option value="3">MIG-II (&#8377;12L &ndash; &#8377;18L)</option>
+                    </select>
+                </div>
+                <div class="subsidy-badge" id="subBadge">Subsidy: &#8377;2,67,280</div>
+            </div>
+        </div>
+
+        <!-- Pre-payment -->
+        <div class="card">
+            <div class="card-title">Pre-payment Strategy</div>
+            <div class="fg">
+                <label>Monthly Extra Pre-payment <span class="val" id="ppDisp">&#8377;0</span></label>
+                <input type="range" id="ppSlider" min="0" max="100000" step="1000" value="0">
+                <input type="number" id="ppInput" min="0" max="500000" step="500" value="0" style="margin-top:6px">
+            </div>
+        </div>
+    </aside>
+
+    <!-- ═══ OUTPUT PANEL ═══ -->
+    <section>
+        <!-- KPI Cards -->
+        <div class="kpi-row">
+            <div class="kpi-card blue">
+                <div class="kpi-lbl">Net Loan Amount</div>
+                <div class="kpi-val" id="kLoan">&mdash;</div>
+            </div>
+            <div class="kpi-card indigo">
+                <div class="kpi-lbl">Monthly EMI</div>
+                <div class="kpi-val" id="kEMI">&mdash;</div>
+            </div>
+            <div class="kpi-card green">
+                <div class="kpi-lbl">Interest Saved</div>
+                <div class="kpi-val" id="kSave">&mdash;</div>
+            </div>
+            <div class="kpi-card emerald">
+                <div class="kpi-lbl">Time Saved</div>
+                <div class="kpi-val" id="kTime">&mdash;</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-row">
+            <div class="card chart-card">
+                <h3>Total Cost Breakdown</h3>
+                <canvas id="cDonut"></canvas>
+            </div>
+            <div class="card chart-card">
+                <h3>Standard vs. Accelerated Repayment</h3>
+                <canvas id="cLine"></canvas>
+            </div>
+        </div>
+
+        <!-- Breakdown Table -->
+        <div class="card">
+            <div class="card-title">Detailed Cost Breakdown</div>
+            <div id="bkdn"></div>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    Rates as of April 2026 (RBI Repo: 5.25%) &bull; For educational and planning purposes only &bull; Consult your bank for exact figures<br>
+    PMAY-CLSS subsidy figures are approximate per NHB published benchmarks &bull; Max LTV: 80% of Agreement Value
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   DATA
+   ═══════════════════════════════════════════════════════════ */
+const STATES = [
+    { n: 'Maharashtra',    sd: 6,   rg: 1   },
+    { n: 'Karnataka',      sd: 5,   rg: 1   },
+    { n: 'Delhi NCR',      sd: 6,   rg: 1   },
+    { n: 'Tamil Nadu',     sd: 7,   rg: 1   },
+    { n: 'Telangana',      sd: 4,   rg: 0.5 },
+    { n: 'Gujarat',        sd: 4.9, rg: 1   },
+    { n: 'Uttar Pradesh',  sd: 5,   rg: 1   },
+    { n: 'Kerala',         sd: 8,   rg: 2   },
+    { n: 'Rajasthan',      sd: 5,   rg: 1   },
+    { n: 'West Bengal',    sd: 6,   rg: 1   },
+    { n: 'Haryana',        sd: 5,   rg: 1   },
+    { n: 'Punjab',         sd: 6,   rg: 1   },
+    { n: 'Madhya Pradesh', sd: 7.5, rg: 1   },
+];
+
+const BANKS = [
+    { n: 'PSU Banks (Best Rate)', r: 7.10 },
+    { n: 'SBI',                   r: 7.25 },
+    { n: 'PNB',                   r: 7.20 },
+    { n: 'Bank of Baroda',        r: 7.15 },
+    { n: 'HDFC Bank',             r: 7.90 },
+    { n: 'ICICI Bank',            r: 7.85 },
+    { n: 'Axis Bank',             r: 8.10 },
+    { n: 'Kotak Mahindra',        r: 8.25 },
+    { n: 'Custom Rate',           r: 0    },
+];
+
+/* PMAY-CLSS: pre-computed subsidy as per NHB benchmarks */
+const PMAY = [
+    { lbl: 'EWS',    sub: 267280 },
+    { lbl: 'LIG',    sub: 267280 },
+    { lbl: 'MIG-I',  sub: 235068 },
+    { lbl: 'MIG-II', sub: 230156 },
+];
+
+/* ═══════════════════════════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+
+const fINR = n => '\u20B9' + new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Math.round(n));
+
+function fC(n) {
+    const a = Math.abs(n), s = n < 0 ? '-' : '';
+    if (a >= 1e7) return s + '\u20B9' + (a / 1e7).toFixed(2) + ' Cr';
+    if (a >= 1e5) return s + '\u20B9' + (a / 1e5).toFixed(2) + ' L';
+    return fINR(n);
+}
+
+function emi(P, annual, months) {
+    if (P <= 0 || months <= 0) return 0;
+    if (annual <= 0) return P / months;
+    const r = annual / 1200;
+    const q = Math.pow(1 + r, months);
+    return P * r * q / (q - 1);
+}
+
+function simulate(P, annual, tenMo, extra) {
+    if (P <= 0) return { emi: 0, stdInt: 0, accInt: 0, saved: 0, stdMo: 0, accMo: 0, moSaved: 0, stdY: [0], accY: [0] };
+    const r = annual / 1200;
+    const e = emi(P, annual, tenMo);
+    const yrs = Math.ceil(tenMo / 12);
+
+    /* Standard */
+    let sB = P, sI = 0;
+    const sY = [P];
+    for (let m = 1; m <= tenMo; m++) {
+        const int = sB * r;
+        sI += int;
+        sB = Math.max(0, sB - (e - int));
+        if (m % 12 === 0) sY.push(Math.round(sB));
+    }
+
+    /* Accelerated */
+    let aB = P, aI = 0, done = false, aMo = tenMo;
+    const aY = [P];
+    for (let m = 1; m <= tenMo; m++) {
+        if (!done) {
+            const int = aB * r;
+            const pay = Math.min(e + extra, aB + int);
+            aI += int;
+            aB = Math.max(0, aB - (pay - int));
+            if (aB < 1) { done = true; aMo = m; aB = 0; }
+        }
+        if (m % 12 === 0) aY.push(Math.round(aB));
+    }
+
+    /* equalise lengths */
+    const mx = Math.max(sY.length, aY.length);
+    while (sY.length < mx) sY.push(0);
+    while (aY.length < mx) aY.push(0);
+
+    return {
+        emi: Math.round(e),
+        stdInt: Math.round(sI),
+        accInt: Math.round(aI),
+        saved: Math.round(sI - aI),
+        stdMo: tenMo,
+        accMo: aMo,
+        moSaved: tenMo - aMo,
+        stdY: sY,
+        accY: aY
+    };
+}
+
+function fmtTime(mo) {
+    const y = Math.floor(mo / 12), m = mo % 12;
+    return (y > 0 ? y + 'Y ' : '') + m + 'M';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CHARTS
+   ═══════════════════════════════════════════════════════════ */
+let chDonut, chLine;
+
+function initCharts() {
+    chDonut = new Chart($('cDonut').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: [],
+            datasets: [{ data: [], backgroundColor: [], borderWidth: 2, borderColor: '#fff' }]
+        },
+        options: {
+            responsive: true,
+            cutout: '55%',
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 14, font: { size: 11 } } },
+                tooltip: { callbacks: { label: c => ' ' + c.label + ': ' + fC(c.raw) } }
+            }
+        }
+    });
+
+    chLine = new Chart($('cLine').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: 'Standard Repayment',
+                    data: [], borderColor: '#DC2626',
+                    backgroundColor: 'rgba(220,38,38,0.08)',
+                    fill: true, tension: 0.35,
+                    pointRadius: 3, pointHoverRadius: 6, borderWidth: 2.5
+                },
+                {
+                    label: 'With Pre-payments',
+                    data: [], borderColor: '#059669',
+                    backgroundColor: 'rgba(5,150,105,0.08)',
+                    fill: true, tension: 0.35,
+                    pointRadius: 3, pointHoverRadius: 6, borderWidth: 2.5
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { callback: v => fC(v), font: { size: 10 } },
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    title: { display: true, text: 'Outstanding Balance (\u20B9)', font: { size: 11 } }
+                },
+                x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+            },
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 14, font: { size: 11 } } },
+                tooltip: { callbacks: { label: c => ' ' + c.dataset.label + ': ' + fC(c.raw) } }
+            }
+        }
+    });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MAIN CALCULATION
+   ═══════════════════════════════════════════════════════════ */
+function calc() {
+    /* ── Read inputs ── */
+    const st    = STATES[$('selState').selectedIndex];
+    const pvL   = parseFloat($('pvInput').value) || 75;
+    const pv    = pvL * 1e5;
+    const cst   = $('selConst').value;
+    const dpPct = parseInt($('dpSlider').value);
+    const rate  = parseFloat($('rateIn').value) || 7.25;
+    const tenY  = parseInt($('tenSlider').value);
+    const tenM  = tenY * 12;
+    const pmOn  = $('pmayTgl').checked;
+    const pmIdx = parseInt($('pmayCat').value);
+    const pp    = parseInt($('ppInput').value) || 0;
+
+    /* ── Statutory costs ── */
+    const sdAmt  = pv * st.sd / 100;
+    const rgAmt  = pv * st.rg / 100;
+
+    let gstEff = 0;                         // effective GST %
+    if (cst === 'aff') gstEff = 1;          // affordable: 1% on full value
+    else if (cst === 'uc') gstEff = 5 * (1 - 0.33);  // 5% with 33% land abatement → 3.35%
+    const gstAmt = pv * gstEff / 100;
+
+    /* ── Loan ── */
+    const dp       = pv * dpPct / 100;
+    const gross    = pv - dp;               // LTV max 80% enforced via 20% min DP
+    let   pmaySub  = 0;
+    if (pmOn) { pmaySub = Math.min(PMAY[pmIdx].sub, gross); }
+    const net = Math.max(0, gross - pmaySub);
+
+    /* ── Simulate ── */
+    const sim = simulate(net, rate, tenM, pp);
+
+    /* ── Update display labels ── */
+    $('pvDisp').textContent  = fC(pv);
+    $('dpDisp').textContent  = dpPct + '%';
+    $('dpAmt').innerHTML     = fINR(dp) + ' &bull; LTV capped at 80%';
+    $('tenDisp').textContent = tenY + ' Years';
+    $('ppDisp').textContent  = fINR(pp);
+
+    /* ── KPI ── */
+    $('kLoan').textContent = fC(net);
+    $('kEMI').textContent  = fINR(sim.emi);
+    $('kSave').textContent = fC(sim.saved);
+    $('kTime').textContent = sim.moSaved > 0 ? fmtTime(sim.moSaved) : '0Y 0M';
+
+    /* ── PMAY badge ── */
+    if (pmOn) $('subBadge').textContent = 'Subsidy: ' + fINR(pmaySub);
+
+    /* ── Donut ── */
+    const dLbl = ['Base Price', 'Stamp Duty + Reg.'];
+    const dDat = [pv, sdAmt + rgAmt];
+    const dClr = ['#1B2A4A', '#0891B2'];
+    if (gstAmt > 0) { dLbl.push('GST'); dDat.push(gstAmt); dClr.push('#D97706'); }
+    dLbl.push('Loan Interest'); dDat.push(sim.stdInt); dClr.push('#DC2626');
+
+    chDonut.data.labels = dLbl;
+    chDonut.data.datasets[0].data = dDat;
+    chDonut.data.datasets[0].backgroundColor = dClr;
+    chDonut.update();
+
+    /* ── Line chart ── */
+    const yLbl = sim.stdY.map((_, i) => 'Yr ' + i);
+    chLine.data.labels = yLbl;
+    chLine.data.datasets[0].data = sim.stdY;
+    chLine.data.datasets[1].data = sim.accY;
+    chLine.update();
+
+    /* ── Breakdown table ── */
+    const totProp = pv + sdAmt + rgAmt + gstAmt;
+    const totStd  = totProp + sim.stdInt;
+    const totAcc  = totProp + sim.accInt;
+
+    let h = '<table class="bt">';
+    h += r('Property Value', fINR(pv));
+    h += r('Stamp Duty (' + st.sd + '%)', fINR(sdAmt));
+    h += r('Registration (' + st.rg + '%)', fINR(rgAmt));
+    h += r('GST ' + (gstEff > 0 ? '(' + gstEff.toFixed(2) + '% eff.)' : '(N/A \u2014 RTM)'), fINR(gstAmt));
+    h += d('Total Property Cost', fINR(totProp));
+
+    h += g('Down Payment (' + dpPct + '%)', fINR(dp));
+    if (pmOn) h += r('PMAY-CLSS Subsidy (' + PMAY[pmIdx].lbl + ')', '<span class="neg">\u2212' + fINR(pmaySub).slice(1) + '</span>');
+    h += d('Net Loan Amount', fINR(net));
+
+    h += g('Interest Rate', rate + '% p.a.');
+    h += r('Tenure', tenY + ' Years (' + tenM + ' months)');
+    h += r('Monthly EMI', fINR(sim.emi));
+    h += r('Total Interest (Standard)', '<span class="red">' + fINR(sim.stdInt) + '</span>');
+
+    if (pp > 0) {
+        h += r('Total Interest (Accelerated)', fINR(sim.accInt));
+        h += '<tr class="sav div"><td>Interest Saved</td><td>' + fINR(sim.saved) + '</td></tr>';
+        h += '<tr class="sav"><td>Time Saved</td><td>' + fmtTime(sim.moSaved) + '</td></tr>';
+        h += '<tr class="sav"><td>Loan Closes In</td><td>' + Math.floor(sim.accMo / 12) + 'Y ' + (sim.accMo % 12) + 'M (vs ' + tenY + 'Y)</td></tr>';
+    }
+
+    h += d('Total Cost of Ownership' + (pp > 0 ? ' (Acc.)' : ''), fINR(pp > 0 ? totAcc : totStd));
+    h += '</table>';
+    $('bkdn').innerHTML = h;
+}
+
+/* table row helpers */
+function r(a, b) { return '<tr><td>' + a + '</td><td>' + b + '</td></tr>'; }
+function d(a, b) { return '<tr class="div"><td>' + a + '</td><td>' + b + '</td></tr>'; }
+function g(a, b) { return '<tr class="gap"><td>' + a + '</td><td>' + b + '</td></tr>'; }
+
+/* ═══════════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════════ */
+function init() {
+    /* Populate state dropdown */
+    STATES.forEach((s, i) => {
+        const o = document.createElement('option');
+        o.value = i; o.textContent = s.n + ' (SD: ' + s.sd + '%)';
+        $('selState').appendChild(o);
+    });
+
+    /* Populate bank dropdown */
+    BANKS.forEach((b, i) => {
+        const o = document.createElement('option');
+        o.value = i; o.textContent = b.n + (b.r ? ' \u2014 ' + b.r + '%' : '');
+        $('selBank').appendChild(o);
+    });
+    $('selBank').value = 1; // default SBI
+
+    /* Bank → auto-fill rate */
+    $('selBank').addEventListener('change', () => {
+        const b = BANKS[$('selBank').value];
+        if (b.r > 0) $('rateIn').value = b.r;
+        calc();
+    });
+
+    /* Sync property value slider ↔ input */
+    $('pvSlider').addEventListener('input', e => { $('pvInput').value = e.target.value; calc(); });
+    $('pvInput').addEventListener('input', e => {
+        const v = parseFloat(e.target.value);
+        if (v >= 10 && v <= 500) $('pvSlider').value = v;
+        calc();
+    });
+
+    /* Sync prepayment slider ↔ input */
+    $('ppSlider').addEventListener('input', e => { $('ppInput').value = e.target.value; calc(); });
+    $('ppInput').addEventListener('input', e => {
+        const v = parseInt(e.target.value);
+        if (v >= 0 && v <= 100000) $('ppSlider').value = v;
+        calc();
+    });
+
+    /* PMAY toggle */
+    $('pmayTgl').addEventListener('change', () => {
+        $('pmayOpts').classList.toggle('hidden', !$('pmayTgl').checked);
+        calc();
+    });
+
+    /* All other inputs → recalculate */
+    ['selState', 'selConst', 'dpSlider', 'rateIn', 'tenSlider', 'pmayCat'].forEach(id => {
+        const el = $(id);
+        el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', calc);
+    });
+
+    initCharts();
+    calc();
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
