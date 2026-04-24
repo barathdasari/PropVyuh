@@ -1,74 +1,151 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bharat Home-Buying Strategy Dashboard | 2026</title>
+    <title>PropVyuh — Home Buying Strategy Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --primary: #1B2A4A;
-            --primary-lt: #2C3E6B;
-            --accent: #0891B2;
-            --success: #059669;
-            --success-lt: #06D6A0;
-            --warning: #D97706;
-            --danger: #DC2626;
-            --bg: #F1F5F9;
-            --card: #FFFFFF;
-            --text: #1E293B;
-            --muted: #64748B;
-            --border: #E2E8F0;
-            --radius: 12px;
+            --bg:       #0B1120;
+            --surface:  rgba(30,41,59,0.4);
+            --glass:    rgba(30,41,59,0.35);
+            --border:   rgba(148,163,184,0.08);
+            --border-h: rgba(148,163,184,0.15);
+            --text:     #E2E8F0;
+            --text-dim: #94A3B8;
+            --text-xdim:#475569;
+            --cyan:     #22D3EE;
+            --violet:   #A78BFA;
+            --emerald:  #34D399;
+            --rose:     #FB7185;
+            --amber:    #FBBF24;
+            --radius:   16px;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
             background: var(--bg);
+            background-image: radial-gradient(rgba(148,163,184,0.04) 1px, transparent 1px);
+            background-size: 28px 28px;
             color: var(--text);
             line-height: 1.5;
+            min-height: 100vh;
         }
 
         /* ── HEADER ─────────────────────────────────────── */
-        .header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-lt) 100%);
-            color: #fff;
-            padding: 28px 24px;
+        .hdr {
+            position: relative;
+            padding: 44px 24px 36px;
             text-align: center;
+            overflow: hidden;
         }
-        .header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; }
-        .header p { margin-top: 6px; opacity: 0.8; font-size: 0.9rem; }
+        .hdr::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 25% 50%, rgba(6,182,212,0.1) 0%, transparent 55%),
+                radial-gradient(ellipse at 75% 50%, rgba(139,92,246,0.1) 0%, transparent 55%);
+            pointer-events: none;
+        }
+        .hdr h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            background: linear-gradient(135deg, #22D3EE 0%, #A78BFA 50%, #22D3EE 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 4s linear infinite;
+            position: relative;
+        }
+        @keyframes shimmer { to { background-position: 200% center; } }
+        .hdr .tagline {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            margin-top: 8px;
+            position: relative;
+            font-weight: 400;
+        }
+        .market-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 16px;
+            padding: 5px 20px;
+            border-radius: 999px;
+            background: rgba(6,182,212,0.06);
+            border: 1px solid rgba(6,182,212,0.2);
+            color: var(--cyan);
+            font-size: 0.73rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+        .market-pill::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--emerald);
+            box-shadow: 0 0 6px var(--emerald);
+        }
 
         /* ── DASHBOARD GRID ─────────────────────────────── */
-        .dashboard {
+        .dash {
             display: grid;
-            grid-template-columns: 370px 1fr;
+            grid-template-columns: 380px 1fr;
             gap: 20px;
-            padding: 20px;
-            max-width: 1440px;
+            padding: 0 20px 20px;
+            max-width: 1480px;
             margin: 0 auto;
         }
 
-        /* ── CARD ───────────────────────────────────────── */
-        .card {
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+        /* ── GLASS PANEL ────────────────────────────────── */
+        .panel {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            height: fit-content;
+            position: sticky;
+            top: 12px;
+        }
+
+        /* ── SECTIONS ───────────────────────────────────── */
+        .sect-hdr {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             margin-bottom: 16px;
         }
-        .card:last-child { margin-bottom: 0; }
-        .card-title {
-            font-size: 0.73rem;
+        .sect-hdr .lbl {
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--muted);
+            letter-spacing: 1.2px;
+            color: var(--text-dim);
             font-weight: 600;
-            margin-bottom: 16px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--border);
+        }
+        .sect-icon {
+            width: 32px; height: 32px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(6,182,212,0.12), rgba(139,92,246,0.12));
+            color: var(--cyan);
+            flex-shrink: 0;
+        }
+        .sect-icon svg { display: block; }
+        .sect-div {
+            height: 1px;
+            margin: 20px 0;
+            background: linear-gradient(90deg, transparent, rgba(6,182,212,0.18), rgba(139,92,246,0.18), transparent);
         }
 
         /* ── FORM ───────────────────────────────────────── */
@@ -78,277 +155,422 @@
             display: flex;
             justify-content: space-between;
             align-items: baseline;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 500;
             margin-bottom: 5px;
+            color: var(--text-dim);
         }
-        .val { font-weight: 700; color: var(--accent); font-size: 0.85rem; }
-        .hint { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+        .val {
+            font-weight: 700;
+            font-size: 0.82rem;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hint { font-size: 0.7rem; color: var(--text-xdim); margin-top: 3px; }
 
         select, input[type="number"] {
             width: 100%;
             padding: 9px 12px;
-            border: 1.5px solid var(--border);
-            border-radius: 8px;
-            font-size: 0.88rem;
+            border: 1px solid var(--border-h);
+            border-radius: 10px;
+            font-size: 0.85rem;
             font-family: inherit;
-            background: #fff;
+            background: rgba(15,23,42,0.6);
             color: var(--text);
             transition: border-color 0.2s, box-shadow 0.2s;
         }
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+            cursor: pointer;
+        }
+        select option { background: #1E293B; color: #E2E8F0; }
         select:focus, input[type="number"]:focus {
             outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(8,145,178,0.12);
+            border-color: rgba(6,182,212,0.4);
+            box-shadow: 0 0 0 3px rgba(6,182,212,0.08);
         }
 
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: var(--border);
+            height: 5px;
+            border-radius: 4px;
+            background: rgba(148,163,184,0.15);
             outline: none;
             cursor: pointer;
-            margin: 4px 0;
+            margin: 6px 0;
         }
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 20px; height: 20px;
+            width: 18px; height: 18px;
             border-radius: 50%;
-            background: var(--accent);
+            background: linear-gradient(135deg, #06B6D4, #8B5CF6);
             cursor: pointer;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+            box-shadow: 0 0 10px rgba(6,182,212,0.35), 0 0 3px rgba(6,182,212,0.5);
+            transition: box-shadow 0.2s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            box-shadow: 0 0 16px rgba(6,182,212,0.5), 0 0 4px rgba(6,182,212,0.7);
         }
         input[type="range"]::-moz-range-thumb {
-            width: 20px; height: 20px;
+            width: 18px; height: 18px;
             border-radius: 50%;
-            background: var(--accent);
+            background: linear-gradient(135deg, #06B6D4, #8B5CF6);
             cursor: pointer;
             border: none;
+            box-shadow: 0 0 10px rgba(6,182,212,0.35);
         }
 
         /* ── TOGGLE ─────────────────────────────────────── */
         .toggle-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .toggle-label { font-size: 0.85rem; font-weight: 500; }
-        .toggle { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+        .toggle-lbl { font-size: 0.82rem; font-weight: 500; color: var(--text-dim); }
+        .toggle { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; cursor: pointer; }
         .toggle input { display: none; }
-        .toggle-track { position: absolute; inset: 0; background: #CBD5E1; border-radius: 24px; transition: background 0.3s; }
+        .toggle-track { position: absolute; inset: 0; background: rgba(148,163,184,0.2); border-radius: 24px; transition: all 0.3s; }
         .toggle-thumb {
             position: absolute; width: 18px; height: 18px; left: 3px; top: 3px;
-            background: #fff; border-radius: 50%; transition: transform 0.3s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            background: #94A3B8; border-radius: 50%; transition: all 0.3s;
         }
-        .toggle input:checked + .toggle-track { background: var(--success); }
-        .toggle input:checked + .toggle-track .toggle-thumb { transform: translateX(20px); }
+        .toggle input:checked + .toggle-track {
+            background: linear-gradient(135deg, rgba(6,182,212,0.4), rgba(139,92,246,0.4));
+            box-shadow: 0 0 14px rgba(6,182,212,0.2);
+        }
+        .toggle input:checked + .toggle-track .toggle-thumb {
+            transform: translateX(20px);
+            background: var(--cyan);
+            box-shadow: 0 0 8px rgba(6,182,212,0.5);
+        }
         .hidden { display: none !important; }
 
         .subsidy-badge {
-            background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
-            border: 1px solid #A7F3D0;
-            border-radius: 8px;
+            background: rgba(16,185,129,0.08);
+            border: 1px solid rgba(16,185,129,0.2);
+            border-radius: 10px;
             padding: 10px 14px;
-            margin-top: 10px;
+            margin-top: 12px;
             text-align: center;
             font-weight: 600;
-            color: var(--success);
-            font-size: 0.95rem;
+            color: var(--emerald);
+            font-size: 0.92rem;
         }
 
-        /* ── KPI ROW ────────────────────────────────────── */
-        .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
-        .kpi-card {
-            background: var(--card);
+        /* ── KPI STRIP ──────────────────────────────────── */
+        .kpi-strip {
+            display: flex;
+            background: var(--glass);
+            border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 16px 12px;
-            text-align: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border-top: 3px solid var(--border);
+            margin-bottom: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
-        .kpi-card.blue   { border-top-color: var(--accent); }
-        .kpi-card.indigo { border-top-color: var(--primary); }
-        .kpi-card.green  { border-top-color: var(--success); }
-        .kpi-card.emerald{ border-top-color: var(--success-lt); }
+        .kpi {
+            flex: 1;
+            padding: 18px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background 0.2s;
+        }
+        .kpi:hover { background: rgba(148,163,184,0.04); }
+        .kpi + .kpi { border-left: 1px solid var(--border); }
+        .kpi-ico {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .kpi-ico svg { display: block; }
+        .kpi-ico.cyan    { background: rgba(6,182,212,0.1);  color: var(--cyan); }
+        .kpi-ico.violet  { background: rgba(139,92,246,0.1); color: var(--violet); }
+        .kpi-ico.emerald { background: rgba(16,185,129,0.1); color: var(--emerald); }
+        .kpi-ico.amber   { background: rgba(245,158,11,0.1); color: var(--amber); }
         .kpi-lbl {
-            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.8px;
-            color: var(--muted); margin-bottom: 6px; font-weight: 600;
+            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.8px;
+            color: var(--text-xdim); font-weight: 600; margin-bottom: 2px;
         }
-        .kpi-val { font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
-        .kpi-card.green .kpi-val, .kpi-card.emerald .kpi-val { color: var(--success); }
+        .kpi-val {
+            font-size: 1.15rem; font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: var(--text);
+        }
 
         /* ── CHARTS ─────────────────────────────────────── */
-        .charts-row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 20px; margin-bottom: 20px; }
-        .chart-card h3 {
-            font-size: 0.73rem; text-transform: uppercase; letter-spacing: 1px;
-            color: var(--muted); font-weight: 600; margin-bottom: 12px;
+        .charts-row { display: grid; grid-template-columns: 1fr 1.5fr; gap: 16px; margin-bottom: 20px; }
+        .chart-wrap {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .chart-wrap h3 {
+            font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-dim); font-weight: 600; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .chart-wrap h3::before {
+            content: '';
+            width: 3px; height: 14px;
+            border-radius: 3px;
+            background: linear-gradient(180deg, var(--cyan), var(--violet));
         }
 
-        /* ── BREAKDOWN TABLE ────────────────────────────── */
+        /* ── BREAKDOWN ──────────────────────────────────── */
+        .breakdown { padding: 20px 0 0; }
+        .breakdown-title {
+            font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-dim); font-weight: 600; margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .breakdown-title::before {
+            content: '';
+            width: 3px; height: 14px;
+            border-radius: 3px;
+            background: linear-gradient(180deg, var(--cyan), var(--violet));
+        }
         .bt { width: 100%; border-collapse: collapse; }
-        .bt td { padding: 7px 0; font-size: 0.85rem; }
-        .bt td:last-child { text-align: right; font-weight: 500; font-variant-numeric: tabular-nums; }
-        .bt .gap td { padding-top: 16px; }
-        .bt .div td { border-top: 1.5px solid var(--border); padding-top: 10px; font-weight: 700; font-size: 0.88rem; }
-        .bt .sav td { color: var(--success); font-weight: 700; }
-        .bt .neg { color: var(--success); }
-        .bt .red { color: var(--danger); }
+        .bt td { padding: 8px 0; font-size: 0.83rem; color: var(--text-dim); }
+        .bt td:last-child { text-align: right; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--text); }
+        .bt .gap td { padding-top: 18px; }
+        .bt .div td { border-top: 1px solid rgba(6,182,212,0.15); padding-top: 12px; font-weight: 700; font-size: 0.85rem; color: var(--text); }
+        .bt .sav td { color: var(--emerald) !important; font-weight: 700; }
+        .bt .neg { color: var(--emerald); }
+        .bt .red { color: var(--rose); }
 
         /* ── FOOTER ─────────────────────────────────────── */
-        .footer { text-align: center; padding: 20px; color: var(--muted); font-size: 0.78rem; }
+        .footer {
+            text-align: center;
+            padding: 24px 20px;
+            color: var(--text-xdim);
+            font-size: 0.72rem;
+            line-height: 1.7;
+        }
 
         /* ── RESPONSIVE ─────────────────────────────────── */
         @media (max-width: 1024px) {
-            .dashboard { grid-template-columns: 1fr; }
+            .dash { grid-template-columns: 1fr; }
+            .panel { position: static; }
         }
         @media (max-width: 768px) {
-            .header h1 { font-size: 1.25rem; }
-            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+            .hdr h1 { font-size: 1.8rem; }
+            .kpi-strip { flex-wrap: wrap; }
+            .kpi { flex: 1 1 45%; }
+            .kpi:nth-child(2) { border-left: 1px solid var(--border); }
+            .kpi:nth-child(3) { border-left: none; border-top: 1px solid var(--border); }
+            .kpi:nth-child(4) { border-top: 1px solid var(--border); }
             .charts-row { grid-template-columns: 1fr; }
-            .dashboard { padding: 12px; gap: 12px; }
+            .dash { padding: 0 12px 12px; gap: 14px; }
         }
         @media (max-width: 480px) {
-            .kpi-val { font-size: 1.05rem; }
+            .hdr { padding: 28px 16px 24px; }
+            .hdr h1 { font-size: 1.5rem; }
+            .kpi-val { font-size: 1rem; }
+            .panel { padding: 18px; border-radius: 16px; }
         }
     </style>
 </head>
 <body>
 
-<header class="header">
-    <h1>Bharat Home-Buying Strategy Dashboard</h1>
-    <p>Interactive Property Purchase Simulator &bull; April 2026 Market Benchmarks (Repo 5.25%)</p>
+<!-- ═══ HEADER ═══ -->
+<header class="hdr">
+    <h1>PropVyuh</h1>
+    <p class="tagline">Your Chakravyuh against bad home loans. Strategize. Simulate. Strike.</p>
+    <div class="market-pill">LIVE &mdash; April 2026 &bull; RBI Repo 5.25%</div>
 </header>
 
-<main class="dashboard">
-    <!-- ═══ INPUT PANEL ═══ -->
-    <aside>
+<!-- ═══ DASHBOARD ═══ -->
+<main class="dash">
+
+    <!-- ── LEFT PANEL ── -->
+    <aside class="panel">
+
         <!-- Property Details -->
-        <div class="card">
-            <div class="card-title">Property Details</div>
-            <div class="fg">
-                <label>State / UT</label>
-                <select id="selState"></select>
-            </div>
-            <div class="fg">
-                <label>Property Value <span class="val" id="pvDisp">&#8377;75.00 L</span></label>
-                <input type="range" id="pvSlider" min="10" max="500" step="5" value="75">
-                <input type="number" id="pvInput" min="10" max="500" step="1" value="75" style="margin-top:6px">
-                <div class="hint">Range: &#8377;10 Lakh &mdash; &#8377;5 Crore</div>
-            </div>
-            <div class="fg">
-                <label>Construction Status</label>
-                <select id="selConst">
-                    <option value="rtm">Ready to Move (0% GST)</option>
-                    <option value="aff">Under Construction &mdash; Affordable (1% GST)</option>
-                    <option value="uc">Under Construction (5% GST, 33% Land Abatement)</option>
-                </select>
-            </div>
+        <div class="sect-hdr">
+            <span class="sect-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </span>
+            <span class="lbl">Property Details</span>
         </div>
+        <div class="fg">
+            <label>State / UT</label>
+            <select id="selState"></select>
+        </div>
+        <div class="fg">
+            <label>Property Value <span class="val" id="pvDisp">&#8377;75.00 L</span></label>
+            <input type="range" id="pvSlider" min="10" max="500" step="5" value="75">
+            <input type="number" id="pvInput" min="10" max="500" step="1" value="75" style="margin-top:6px">
+            <div class="hint">&#8377;10 Lakh &mdash; &#8377;5 Crore</div>
+        </div>
+        <div class="fg">
+            <label>Construction Status</label>
+            <select id="selConst">
+                <option value="rtm">Ready to Move (0% GST)</option>
+                <option value="aff">Under Construction &mdash; Affordable (1%)</option>
+                <option value="uc">Under Construction (5%, 33% Land Abatement)</option>
+            </select>
+        </div>
+
+        <div class="sect-div"></div>
 
         <!-- Loan Configuration -->
-        <div class="card">
-            <div class="card-title">Loan Configuration</div>
-            <div class="fg">
-                <label>Bank / Lender</label>
-                <select id="selBank"></select>
-            </div>
-            <div class="fg">
-                <label>Down Payment <span class="val" id="dpDisp">20%</span></label>
-                <input type="range" id="dpSlider" min="20" max="50" step="1" value="20">
-                <div class="hint" id="dpAmt">&#8377;15,00,000 &bull; LTV capped at 80%</div>
-            </div>
-            <div class="fg">
-                <label>Interest Rate (% p.a.)</label>
-                <input type="number" id="rateIn" min="5" max="15" step="0.05" value="7.25">
-            </div>
-            <div class="fg">
-                <label>Loan Tenure <span class="val" id="tenDisp">20 Years</span></label>
-                <input type="range" id="tenSlider" min="5" max="30" step="1" value="20">
-            </div>
+        <div class="sect-hdr">
+            <span class="sect-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7"/><path d="M4 7l8-5 8 5z"/></svg>
+            </span>
+            <span class="lbl">Loan Configuration</span>
+        </div>
+        <div class="fg">
+            <label>Bank / Lender</label>
+            <select id="selBank"></select>
+        </div>
+        <div class="fg">
+            <label>Down Payment <span class="val" id="dpDisp">20%</span></label>
+            <input type="range" id="dpSlider" min="20" max="50" step="1" value="20">
+            <div class="hint" id="dpAmt">&#8377;15,00,000 &bull; Max LTV 80%</div>
+        </div>
+        <div class="fg">
+            <label>Interest Rate (% p.a.)</label>
+            <input type="number" id="rateIn" min="5" max="15" step="0.05" value="7.25">
+        </div>
+        <div class="fg">
+            <label>Loan Tenure <span class="val" id="tenDisp">20 Years</span></label>
+            <input type="range" id="tenSlider" min="5" max="30" step="1" value="20">
         </div>
 
-        <!-- PMAY & Benefits -->
-        <div class="card">
-            <div class="card-title">PMAY &amp; Benefits</div>
-            <div class="toggle-row">
-                <span class="toggle-label">PMAY-CLSS Eligible</span>
-                <label class="toggle">
-                    <input type="checkbox" id="pmayTgl">
-                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
-                </label>
-            </div>
-            <div id="pmayOpts" class="hidden">
-                <div class="fg">
-                    <label>Income Category</label>
-                    <select id="pmayCat">
-                        <option value="0">EWS (Income &le; &#8377;3L)</option>
-                        <option value="1">LIG (&#8377;3L &ndash; &#8377;6L)</option>
-                        <option value="2">MIG-I (&#8377;6L &ndash; &#8377;12L)</option>
-                        <option value="3">MIG-II (&#8377;12L &ndash; &#8377;18L)</option>
-                    </select>
-                </div>
-                <div class="subsidy-badge" id="subBadge">Subsidy: &#8377;2,67,280</div>
-            </div>
+        <div class="sect-div"></div>
+
+        <!-- PMAY -->
+        <div class="sect-hdr">
+            <span class="sect-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            </span>
+            <span class="lbl">PMAY &amp; Benefits</span>
         </div>
+        <div class="toggle-row">
+            <span class="toggle-lbl">PMAY-CLSS Eligible</span>
+            <label class="toggle">
+                <input type="checkbox" id="pmayTgl">
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            </label>
+        </div>
+        <div id="pmayOpts" class="hidden">
+            <div class="fg">
+                <label>Income Category</label>
+                <select id="pmayCat">
+                    <option value="0">EWS (Income &le; &#8377;3L)</option>
+                    <option value="1">LIG (&#8377;3L &ndash; &#8377;6L)</option>
+                    <option value="2">MIG-I (&#8377;6L &ndash; &#8377;12L)</option>
+                    <option value="3">MIG-II (&#8377;12L &ndash; &#8377;18L)</option>
+                </select>
+            </div>
+            <div class="subsidy-badge" id="subBadge">Subsidy: &#8377;2,67,280</div>
+        </div>
+
+        <div class="sect-div"></div>
 
         <!-- Pre-payment -->
-        <div class="card">
-            <div class="card-title">Pre-payment Strategy</div>
-            <div class="fg">
-                <label>Monthly Extra Pre-payment <span class="val" id="ppDisp">&#8377;0</span></label>
-                <input type="range" id="ppSlider" min="0" max="100000" step="1000" value="0">
-                <input type="number" id="ppInput" min="0" max="500000" step="500" value="0" style="margin-top:6px">
-            </div>
+        <div class="sect-hdr">
+            <span class="sect-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </span>
+            <span class="lbl">Pre-payment Strategy</span>
+        </div>
+        <div class="fg">
+            <label>Monthly Extra <span class="val" id="ppDisp">&#8377;0</span></label>
+            <input type="range" id="ppSlider" min="0" max="100000" step="1000" value="0">
+            <input type="number" id="ppInput" min="0" max="500000" step="500" value="0" style="margin-top:6px">
         </div>
     </aside>
 
-    <!-- ═══ OUTPUT PANEL ═══ -->
+    <!-- ── RIGHT PANEL ── -->
     <section>
-        <!-- KPI Cards -->
-        <div class="kpi-row">
-            <div class="kpi-card blue">
-                <div class="kpi-lbl">Net Loan Amount</div>
-                <div class="kpi-val" id="kLoan">&mdash;</div>
+
+        <!-- KPI Strip -->
+        <div class="kpi-strip">
+            <div class="kpi">
+                <div class="kpi-ico cyan">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 00-1-1H5a2 2 0 000 4h15"/><path d="M3 5v14a2 2 0 002 2h14a1 1 0 001-1v-4"/><path d="M18 12a2 2 0 000 4h4v-4h-4z"/></svg>
+                </div>
+                <div>
+                    <div class="kpi-lbl">Net Loan</div>
+                    <div class="kpi-val" id="kLoan">&mdash;</div>
+                </div>
             </div>
-            <div class="kpi-card indigo">
-                <div class="kpi-lbl">Monthly EMI</div>
-                <div class="kpi-val" id="kEMI">&mdash;</div>
+            <div class="kpi">
+                <div class="kpi-ico violet">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                </div>
+                <div>
+                    <div class="kpi-lbl">Monthly EMI</div>
+                    <div class="kpi-val" id="kEMI">&mdash;</div>
+                </div>
             </div>
-            <div class="kpi-card green">
-                <div class="kpi-lbl">Interest Saved</div>
-                <div class="kpi-val" id="kSave">&mdash;</div>
+            <div class="kpi">
+                <div class="kpi-ico emerald">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17l-5-5-4 4-7-7"/><path d="M16 17h6v-6"/></svg>
+                </div>
+                <div>
+                    <div class="kpi-lbl">Interest Saved</div>
+                    <div class="kpi-val" id="kSave">&mdash;</div>
+                </div>
             </div>
-            <div class="kpi-card emerald">
-                <div class="kpi-lbl">Time Saved</div>
-                <div class="kpi-val" id="kTime">&mdash;</div>
+            <div class="kpi">
+                <div class="kpi-ico amber">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+                <div>
+                    <div class="kpi-lbl">Time Saved</div>
+                    <div class="kpi-val" id="kTime">&mdash;</div>
+                </div>
             </div>
         </div>
 
         <!-- Charts -->
         <div class="charts-row">
-            <div class="card chart-card">
-                <h3>Total Cost Breakdown</h3>
+            <div class="chart-wrap">
+                <h3>Cost Breakdown</h3>
                 <canvas id="cDonut"></canvas>
             </div>
-            <div class="card chart-card">
+            <div class="chart-wrap">
                 <h3>Standard vs. Accelerated Repayment</h3>
                 <canvas id="cLine"></canvas>
             </div>
         </div>
 
         <!-- Breakdown Table -->
-        <div class="card">
-            <div class="card-title">Detailed Cost Breakdown</div>
+        <div class="breakdown">
+            <div class="breakdown-title">Detailed Cost Breakdown</div>
             <div id="bkdn"></div>
         </div>
     </section>
 </main>
 
 <footer class="footer">
-    Rates as of April 2026 (RBI Repo: 5.25%) &bull; For educational and planning purposes only &bull; Consult your bank for exact figures<br>
-    PMAY-CLSS subsidy figures are approximate per NHB published benchmarks &bull; Max LTV: 80% of Agreement Value
+    PropVyuh &bull; Rates as of April 2026 (RBI Repo: 5.25%) &bull; For educational &amp; planning purposes only<br>
+    PMAY-CLSS subsidy figures are approximate per NHB benchmarks &bull; Max LTV: 80% of Agreement Value
 </footer>
 
 <script>
+/* ═══════════════════════════════════════════════════════════
+   CHART.JS DARK THEME
+   ═══════════════════════════════════════════════════════════ */
+Chart.defaults.color = '#94A3B8';
+Chart.defaults.borderColor = 'rgba(148,163,184,0.08)';
+Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif";
+
 /* ═══════════════════════════════════════════════════════════
    DATA
    ═══════════════════════════════════════════════════════════ */
@@ -380,7 +602,6 @@ const BANKS = [
     { n: 'Custom Rate',           r: 0    },
 ];
 
-/* PMAY-CLSS: pre-computed subsidy as per NHB benchmarks */
 const PMAY = [
     { lbl: 'EWS',    sub: 267280 },
     { lbl: 'LIG',    sub: 267280 },
@@ -392,7 +613,6 @@ const PMAY = [
    HELPERS
    ═══════════════════════════════════════════════════════════ */
 const $ = id => document.getElementById(id);
-
 const fINR = n => '\u20B9' + new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Math.round(n));
 
 function fC(n) {
@@ -414,19 +634,15 @@ function simulate(P, annual, tenMo, extra) {
     if (P <= 0) return { emi: 0, stdInt: 0, accInt: 0, saved: 0, stdMo: 0, accMo: 0, moSaved: 0, stdY: [0], accY: [0] };
     const r = annual / 1200;
     const e = emi(P, annual, tenMo);
-    const yrs = Math.ceil(tenMo / 12);
 
-    /* Standard */
     let sB = P, sI = 0;
     const sY = [P];
     for (let m = 1; m <= tenMo; m++) {
-        const int = sB * r;
-        sI += int;
+        const int = sB * r; sI += int;
         sB = Math.max(0, sB - (e - int));
         if (m % 12 === 0) sY.push(Math.round(sB));
     }
 
-    /* Accelerated */
     let aB = P, aI = 0, done = false, aMo = tenMo;
     const aY = [P];
     for (let m = 1; m <= tenMo; m++) {
@@ -440,22 +656,11 @@ function simulate(P, annual, tenMo, extra) {
         if (m % 12 === 0) aY.push(Math.round(aB));
     }
 
-    /* equalise lengths */
     const mx = Math.max(sY.length, aY.length);
     while (sY.length < mx) sY.push(0);
     while (aY.length < mx) aY.push(0);
 
-    return {
-        emi: Math.round(e),
-        stdInt: Math.round(sI),
-        accInt: Math.round(aI),
-        saved: Math.round(sI - aI),
-        stdMo: tenMo,
-        accMo: aMo,
-        moSaved: tenMo - aMo,
-        stdY: sY,
-        accY: aY
-    };
+    return { emi: Math.round(e), stdInt: Math.round(sI), accInt: Math.round(aI), saved: Math.round(sI - aI), stdMo: tenMo, accMo: aMo, moSaved: tenMo - aMo, stdY: sY, accY: aY };
 }
 
 function fmtTime(mo) {
@@ -471,16 +676,13 @@ let chDonut, chLine;
 function initCharts() {
     chDonut = new Chart($('cDonut').getContext('2d'), {
         type: 'doughnut',
-        data: {
-            labels: [],
-            datasets: [{ data: [], backgroundColor: [], borderWidth: 2, borderColor: '#fff' }]
-        },
+        data: { labels: [], datasets: [{ data: [], backgroundColor: [], borderWidth: 2, borderColor: '#1E293B' }] },
         options: {
-            responsive: true,
-            cutout: '55%',
+            responsive: true, cutout: '60%',
             plugins: {
-                legend: { position: 'bottom', labels: { padding: 14, font: { size: 11 } } },
-                tooltip: { callbacks: { label: c => ' ' + c.label + ': ' + fC(c.raw) } }
+                legend: { position: 'bottom', labels: { padding: 14, font: { size: 11 }, color: '#94A3B8' } },
+                tooltip: { backgroundColor: '#1E293B', borderColor: 'rgba(148,163,184,0.15)', borderWidth: 1, titleColor: '#E2E8F0', bodyColor: '#CBD5E1',
+                    callbacks: { label: c => ' ' + c.label + ': ' + fC(c.raw) } }
             }
         }
     });
@@ -490,37 +692,21 @@ function initCharts() {
         data: {
             labels: [],
             datasets: [
-                {
-                    label: 'Standard Repayment',
-                    data: [], borderColor: '#DC2626',
-                    backgroundColor: 'rgba(220,38,38,0.08)',
-                    fill: true, tension: 0.35,
-                    pointRadius: 3, pointHoverRadius: 6, borderWidth: 2.5
-                },
-                {
-                    label: 'With Pre-payments',
-                    data: [], borderColor: '#059669',
-                    backgroundColor: 'rgba(5,150,105,0.08)',
-                    fill: true, tension: 0.35,
-                    pointRadius: 3, pointHoverRadius: 6, borderWidth: 2.5
-                }
+                { label: 'Standard', data: [], borderColor: '#FB7185', backgroundColor: 'rgba(251,113,133,0.06)', fill: true, tension: 0.35, pointRadius: 2.5, pointHoverRadius: 6, borderWidth: 2.5, pointBackgroundColor: '#FB7185' },
+                { label: 'With Pre-payments', data: [], borderColor: '#22D3EE', backgroundColor: 'rgba(34,211,238,0.06)', fill: true, tension: 0.35, pointRadius: 2.5, pointHoverRadius: 6, borderWidth: 2.5, pointBackgroundColor: '#22D3EE' }
             ]
         },
         options: {
             responsive: true,
             interaction: { mode: 'index', intersect: false },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { callback: v => fC(v), font: { size: 10 } },
-                    grid: { color: 'rgba(0,0,0,0.05)' },
-                    title: { display: true, text: 'Outstanding Balance (\u20B9)', font: { size: 11 } }
-                },
+                y: { beginAtZero: true, ticks: { callback: v => fC(v), font: { size: 10 } }, grid: { color: 'rgba(148,163,184,0.06)' }, title: { display: true, text: 'Outstanding (\u20B9)', font: { size: 10 }, color: '#64748B' } },
                 x: { grid: { display: false }, ticks: { font: { size: 10 } } }
             },
             plugins: {
-                legend: { position: 'bottom', labels: { padding: 14, font: { size: 11 } } },
-                tooltip: { callbacks: { label: c => ' ' + c.dataset.label + ': ' + fC(c.raw) } }
+                legend: { position: 'bottom', labels: { padding: 14, font: { size: 11 }, usePointStyle: true, pointStyle: 'circle', color: '#94A3B8' } },
+                tooltip: { backgroundColor: '#1E293B', borderColor: 'rgba(148,163,184,0.15)', borderWidth: 1, titleColor: '#E2E8F0', bodyColor: '#CBD5E1',
+                    callbacks: { label: c => ' ' + c.dataset.label + ': ' + fC(c.raw) } }
             }
         }
     });
@@ -530,7 +716,6 @@ function initCharts() {
    MAIN CALCULATION
    ═══════════════════════════════════════════════════════════ */
 function calc() {
-    /* ── Read inputs ── */
     const st    = STATES[$('selState').selectedIndex];
     const pvL   = parseFloat($('pvInput').value) || 75;
     const pv    = pvL * 1e5;
@@ -543,125 +728,104 @@ function calc() {
     const pmIdx = parseInt($('pmayCat').value);
     const pp    = parseInt($('ppInput').value) || 0;
 
-    /* ── Statutory costs ── */
-    const sdAmt  = pv * st.sd / 100;
-    const rgAmt  = pv * st.rg / 100;
-
-    let gstEff = 0;                         // effective GST %
-    if (cst === 'aff') gstEff = 1;          // affordable: 1% on full value
-    else if (cst === 'uc') gstEff = 5 * (1 - 0.33);  // 5% with 33% land abatement → 3.35%
+    const sdAmt = pv * st.sd / 100;
+    const rgAmt = pv * st.rg / 100;
+    let gstEff = 0;
+    if (cst === 'aff') gstEff = 1;
+    else if (cst === 'uc') gstEff = 5 * (1 - 0.33);
     const gstAmt = pv * gstEff / 100;
 
-    /* ── Loan ── */
-    const dp       = pv * dpPct / 100;
-    const gross    = pv - dp;               // LTV max 80% enforced via 20% min DP
-    let   pmaySub  = 0;
-    if (pmOn) { pmaySub = Math.min(PMAY[pmIdx].sub, gross); }
+    const dp    = pv * dpPct / 100;
+    const gross = pv - dp;
+    let pmaySub = 0;
+    if (pmOn) pmaySub = Math.min(PMAY[pmIdx].sub, gross);
     const net = Math.max(0, gross - pmaySub);
 
-    /* ── Simulate ── */
     const sim = simulate(net, rate, tenM, pp);
 
-    /* ── Update display labels ── */
     $('pvDisp').textContent  = fC(pv);
     $('dpDisp').textContent  = dpPct + '%';
-    $('dpAmt').innerHTML     = fINR(dp) + ' &bull; LTV capped at 80%';
+    $('dpAmt').innerHTML     = fINR(dp) + ' &bull; Max LTV 80%';
     $('tenDisp').textContent = tenY + ' Years';
     $('ppDisp').textContent  = fINR(pp);
 
-    /* ── KPI ── */
     $('kLoan').textContent = fC(net);
     $('kEMI').textContent  = fINR(sim.emi);
     $('kSave').textContent = fC(sim.saved);
     $('kTime').textContent = sim.moSaved > 0 ? fmtTime(sim.moSaved) : '0Y 0M';
 
-    /* ── PMAY badge ── */
     if (pmOn) $('subBadge').textContent = 'Subsidy: ' + fINR(pmaySub);
 
-    /* ── Donut ── */
-    const dLbl = ['Base Price', 'Stamp Duty + Reg.'];
-    const dDat = [pv, sdAmt + rgAmt];
-    const dClr = ['#1B2A4A', '#0891B2'];
-    if (gstAmt > 0) { dLbl.push('GST'); dDat.push(gstAmt); dClr.push('#D97706'); }
-    dLbl.push('Loan Interest'); dDat.push(sim.stdInt); dClr.push('#DC2626');
-
-    chDonut.data.labels = dLbl;
-    chDonut.data.datasets[0].data = dDat;
-    chDonut.data.datasets[0].backgroundColor = dClr;
+    /* donut */
+    const dL = ['Base Price', 'Stamp + Reg.'];
+    const dD = [pv, sdAmt + rgAmt];
+    const dC = ['#22D3EE', '#8B5CF6'];
+    if (gstAmt > 0) { dL.push('GST'); dD.push(gstAmt); dC.push('#FBBF24'); }
+    dL.push('Loan Interest'); dD.push(sim.stdInt); dC.push('#FB7185');
+    chDonut.data.labels = dL;
+    chDonut.data.datasets[0].data = dD;
+    chDonut.data.datasets[0].backgroundColor = dC;
     chDonut.update();
 
-    /* ── Line chart ── */
-    const yLbl = sim.stdY.map((_, i) => 'Yr ' + i);
-    chLine.data.labels = yLbl;
+    /* line */
+    chLine.data.labels = sim.stdY.map((_, i) => 'Yr ' + i);
     chLine.data.datasets[0].data = sim.stdY;
     chLine.data.datasets[1].data = sim.accY;
     chLine.update();
 
-    /* ── Breakdown table ── */
-    const totProp = pv + sdAmt + rgAmt + gstAmt;
-    const totStd  = totProp + sim.stdInt;
-    const totAcc  = totProp + sim.accInt;
-
+    /* breakdown */
+    const totP = pv + sdAmt + rgAmt + gstAmt;
     let h = '<table class="bt">';
-    h += r('Property Value', fINR(pv));
-    h += r('Stamp Duty (' + st.sd + '%)', fINR(sdAmt));
-    h += r('Registration (' + st.rg + '%)', fINR(rgAmt));
-    h += r('GST ' + (gstEff > 0 ? '(' + gstEff.toFixed(2) + '% eff.)' : '(N/A \u2014 RTM)'), fINR(gstAmt));
-    h += d('Total Property Cost', fINR(totProp));
-
-    h += g('Down Payment (' + dpPct + '%)', fINR(dp));
-    if (pmOn) h += r('PMAY-CLSS Subsidy (' + PMAY[pmIdx].lbl + ')', '<span class="neg">\u2212' + fINR(pmaySub).slice(1) + '</span>');
-    h += d('Net Loan Amount', fINR(net));
-
-    h += g('Interest Rate', rate + '% p.a.');
-    h += r('Tenure', tenY + ' Years (' + tenM + ' months)');
-    h += r('Monthly EMI', fINR(sim.emi));
-    h += r('Total Interest (Standard)', '<span class="red">' + fINR(sim.stdInt) + '</span>');
-
+    h += R('Property Value', fINR(pv));
+    h += R('Stamp Duty (' + st.sd + '%)', fINR(sdAmt));
+    h += R('Registration (' + st.rg + '%)', fINR(rgAmt));
+    h += R('GST ' + (gstEff > 0 ? '(' + gstEff.toFixed(2) + '% eff.)' : '(N/A \u2014 RTM)'), fINR(gstAmt));
+    h += D('Total Property Cost', fINR(totP));
+    h += G('Down Payment (' + dpPct + '%)', fINR(dp));
+    if (pmOn) h += R('PMAY-CLSS Subsidy (' + PMAY[pmIdx].lbl + ')', '<span class="neg">\u2212' + fINR(pmaySub).slice(1) + '</span>');
+    h += D('Net Loan Amount', fINR(net));
+    h += G('Interest Rate', rate + '% p.a.');
+    h += R('Tenure', tenY + ' Years (' + tenM + ' months)');
+    h += R('Monthly EMI', fINR(sim.emi));
+    h += R('Total Interest (Standard)', '<span class="red">' + fINR(sim.stdInt) + '</span>');
     if (pp > 0) {
-        h += r('Total Interest (Accelerated)', fINR(sim.accInt));
+        h += R('Total Interest (Accelerated)', fINR(sim.accInt));
         h += '<tr class="sav div"><td>Interest Saved</td><td>' + fINR(sim.saved) + '</td></tr>';
         h += '<tr class="sav"><td>Time Saved</td><td>' + fmtTime(sim.moSaved) + '</td></tr>';
         h += '<tr class="sav"><td>Loan Closes In</td><td>' + Math.floor(sim.accMo / 12) + 'Y ' + (sim.accMo % 12) + 'M (vs ' + tenY + 'Y)</td></tr>';
     }
-
-    h += d('Total Cost of Ownership' + (pp > 0 ? ' (Acc.)' : ''), fINR(pp > 0 ? totAcc : totStd));
+    h += D('Total Cost' + (pp > 0 ? ' (Accelerated)' : ''), fINR(pp > 0 ? totP + sim.accInt : totP + sim.stdInt));
     h += '</table>';
     $('bkdn').innerHTML = h;
 }
 
-/* table row helpers */
-function r(a, b) { return '<tr><td>' + a + '</td><td>' + b + '</td></tr>'; }
-function d(a, b) { return '<tr class="div"><td>' + a + '</td><td>' + b + '</td></tr>'; }
-function g(a, b) { return '<tr class="gap"><td>' + a + '</td><td>' + b + '</td></tr>'; }
+function R(a, b) { return '<tr><td>' + a + '</td><td>' + b + '</td></tr>'; }
+function D(a, b) { return '<tr class="div"><td>' + a + '</td><td>' + b + '</td></tr>'; }
+function G(a, b) { return '<tr class="gap"><td>' + a + '</td><td>' + b + '</td></tr>'; }
 
 /* ═══════════════════════════════════════════════════════════
    INIT
    ═══════════════════════════════════════════════════════════ */
 function init() {
-    /* Populate state dropdown */
     STATES.forEach((s, i) => {
         const o = document.createElement('option');
         o.value = i; o.textContent = s.n + ' (SD: ' + s.sd + '%)';
         $('selState').appendChild(o);
     });
 
-    /* Populate bank dropdown */
     BANKS.forEach((b, i) => {
         const o = document.createElement('option');
         o.value = i; o.textContent = b.n + (b.r ? ' \u2014 ' + b.r + '%' : '');
         $('selBank').appendChild(o);
     });
-    $('selBank').value = 1; // default SBI
+    $('selBank').value = 1;
 
-    /* Bank → auto-fill rate */
     $('selBank').addEventListener('change', () => {
         const b = BANKS[$('selBank').value];
         if (b.r > 0) $('rateIn').value = b.r;
         calc();
     });
 
-    /* Sync property value slider ↔ input */
     $('pvSlider').addEventListener('input', e => { $('pvInput').value = e.target.value; calc(); });
     $('pvInput').addEventListener('input', e => {
         const v = parseFloat(e.target.value);
@@ -669,7 +833,6 @@ function init() {
         calc();
     });
 
-    /* Sync prepayment slider ↔ input */
     $('ppSlider').addEventListener('input', e => { $('ppInput').value = e.target.value; calc(); });
     $('ppInput').addEventListener('input', e => {
         const v = parseInt(e.target.value);
@@ -677,13 +840,11 @@ function init() {
         calc();
     });
 
-    /* PMAY toggle */
     $('pmayTgl').addEventListener('change', () => {
         $('pmayOpts').classList.toggle('hidden', !$('pmayTgl').checked);
         calc();
     });
 
-    /* All other inputs → recalculate */
     ['selState', 'selConst', 'dpSlider', 'rateIn', 'tenSlider', 'pmayCat'].forEach(id => {
         const el = $(id);
         el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', calc);
